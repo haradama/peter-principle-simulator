@@ -110,8 +110,13 @@ class Agent {
   targetPos() {
     const yStep = height / (LEVEL_COUNTS.length + 1);
     const targetY = height - yStep * (this.level + 1);
-    const xStep = width / (LEVEL_COUNTS[this.level] + 1);
-    const targetX = xStep * (this.slot + 1);
+
+    const marginLeft = width * 0.1;
+    const marginRight = width * 0.9;
+    const levelWidth = marginRight - marginLeft;
+    const xStep = levelWidth / (LEVEL_COUNTS[this.level] + 1);
+    const targetX = marginLeft + xStep * (this.slot + 1);
+
     return { x: targetX, y: targetY };
   }
 
@@ -139,6 +144,8 @@ class Agent {
 // Main draw loop
 function draw() {
   background(240);
+
+  drawBackground();
 
   if (running) {
     const factor = parseFloat(speedSlider.value()); // 0.1 – 10
@@ -220,6 +227,17 @@ function stepSimulation() {
     const vacant = getVacantSlot(0);
     if (vacant === null) break;
     agents.push(new Agent(agents.length, 0, vacant));
+  }
+}
+
+function drawBackground() {
+  // Draw horizontal lines for each level
+  const yStep = height / (LEVEL_COUNTS.length + 1);
+  stroke(180);
+  strokeWeight(1);
+  for (let i = 0; i < LEVEL_COUNTS.length; i++) {
+    const y = height - yStep * (i + 0.5);
+    line(width * 0.1, y, width * 0.9, y);
   }
 }
 
